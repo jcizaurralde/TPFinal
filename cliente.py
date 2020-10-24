@@ -9,4 +9,3 @@ class Cliente:
         self.telefono = telefono
         self.mail = mail 
         
-    

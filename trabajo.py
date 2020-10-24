@@ -17,4 +17,4 @@ class Trabajo:
         self.retirado = retirado
         self.id_trabajo = id_trabajo
 
-    
+  

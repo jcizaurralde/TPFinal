@@ -4,17 +4,23 @@ from repositorioClientes import RepositorioClientes
 from cliente import Cliente
 from clienteCorporativo import ClienteCorporativo
 from clienteParticular import ClienteParticular
+from trabajo import Trabajo
+from listaTrabajos import ListaTrabajos
+from repositorioTrabajos import RepositorioTrabajos
+import datetime
 class Menu:
     '''Mostrar un menu y responder a las opciones'''
     def __init__(self):
         self.lista_clientes = ListaClientes()
         self.reposclientes = RepositorioClientes()
+        self.listatrabajos = ListaTrabajos()
         self.opciones = {
             "1": self.mostrar_clientes,
             "2": self.nuevo_cliente,
             "3": self.actualizar_datos_clientes,
             "4": self.eliminar_clientes,
-            
+            "5": self.nuevo_trabajo,
+            "6": self.trabajo_finalizado,
             "0": self.salir
         }
     
@@ -25,6 +31,8 @@ class Menu:
         2. Ingresar los datos de un nuevo cliente
         3. Actualizar datos de cliente
         4. Eliminar cliente
+        5. Nuevo Trabajo
+        6. Marcar como finalizado un trabajo
         0. Salir
         """)
     
@@ -121,7 +129,51 @@ class Menu:
         if c is False:
             print("Error al intentar eliminar al cliente de la base de datos")
         else:
-            print("Cliente eliminado correctamente de la base de datos")    
+            print("Cliente eliminado correctamente de la base de datos")
+
+    #NUEVO TRABAJO: Para cargar un nuevo trabajo en base de datos trabajo
+    def nuevo_trabajo(self):
+        tipo = "A"
+        while tipo not in ("C", "c", "P", "p"):
+            tipo = input("Ingrese el tipo de cliente al que desa asignarle el trabajo: C = Corporativo - P = Particular: ")
+        nombre = None
+        if tipo in ("C", "c"):
+            id = int(input("Ingrese el id del cliente: "))
+            contacto = None
+            tc= None
+        else:
+            id = int(input("Ingrese el id del cliente: "))
+            apellido = None
+        tel = None
+        mail = None
+        if tipo in ("C", "c"):
+            cliente = ClienteCorporativo(nombre, contacto, tc, tel, mail, id)
+            fecha_ingreso = datetime.date.today()
+            print("Fecha de entrega propuesta: ")
+            dia = (int(input("Ingrese el dia de entrega propuesta: ")))
+            mes = (int(input("Ingrese el mes de entrega propuesta: ")))
+            anio = (int(input("Ingrese el año de entrega propuesta: ")))
+            fecha_entrega_propuesta = datetime.date(anio, mes, dia)
+            fecha_entrega_real = None
+            retirado = False
+            descripcion = input("Ingrese una breve descripcion del trabajo a realizar: ")
+            nt = self.listatrabajos.nuevo_trabajo(cliente, fecha_ingreso, fecha_entrega_propuesta, fecha_entrega_real, descripcion, retirado)
+        else:
+            cliente = ClienteParticular(nombre, apellido, tel, mail, id)
+            fecha_ingreso = datetime.date.today()
+            print("Fecha de entrega propuesta: ")
+            dia = (int(input("Ingrese el dia de entrega propuesta: ")))
+            mes = (int(input("Ingrese el mes de entrega propuesta: ")))
+            anio = (int(input("Ingrese el año de entrega propuesta: ")))
+            fecha_entrega_propuesta = datetime.date(anio, mes, dia)
+            fecha_entrega_real = None
+            retirado = False
+            descripcion = input("Ingrese una breve descripcion del trabajo a realizar: ")
+            nt = self.listatrabajos.nuevo_trabajo(cliente, fecha_ingreso, fecha_entrega_propuesta, fecha_entrega_real, descripcion, retirado)
+        if nt == 0:
+            print("Error al intentar cargar el trabajo nuevo")
+        else:
+            print("Trabajo cargado exitosamente")  
 
 
     def salir(self):
