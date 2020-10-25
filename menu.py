@@ -17,14 +17,18 @@ class Menu:
         self.repostrabajos = RepositorioTrabajos()
         self.opciones = {
             "1": self.mostrar_clientes,
-            "2": self.nuevo_cliente,
-            "3": self.actualizar_datos_clientes,
-            "4": self.eliminar_clientes,
-            "5": self.nuevo_trabajo,
-            "6": self.trabajo_finalizado,
-            "7": self.trabajo_entregado,
-            "8": self.actualizar_datos_trabajo,
-            "9": self.eliminar_trabajo,
+            "2": self.mostrar_un_cliente,
+            "3": self.nuevo_cliente,
+            "4": self.actualizar_datos_clientes,
+            "5": self.eliminar_clientes,
+            "6": self.nuevo_trabajo,
+            "7": self.mostrar_trabajo,
+            "8": self.trabajo_finalizado,
+            "9": self.trabajo_entregado,
+            "10": self.actualizar_datos_trabajo,
+            "11": self.eliminar_trabajo,
+            "12": self.informe_historial_trabajos,
+            "13": self. mostrar_trabajos,
             "0": self.salir
         }
     
@@ -32,14 +36,18 @@ class Menu:
         print ("""
         Menu del sistema:
         1. Mostrar todos los clientes
-        2. Ingresar los datos de un nuevo cliente
-        3. Actualizar datos de un cliente
-        4. Eliminar cliente
-        5. Ingresar los datos de un nuevo trabajo
-        6. Marcar un trabajo como finalizado
-        7. Marcar un trabajo como entregado
-        8. Actualizar datos de un trabajo
-        9. Eliminar trabajo
+        2. Mostrar un cliente por ID
+        3. Ingresar los datos de un nuevo cliente
+        4. Actualizar datos de un cliente
+        5. Eliminar cliente
+        6. Ingresar los datos de un nuevo trabajo
+        7. Mostrar trabajo por ID
+        8. Marcar un trabajo como finalizado
+        9. Marcar un trabajo como entregado
+        10. Actualizar datos de un trabajo
+        11. Eliminar trabajo
+        12. Ver historial de trabajos de un cliente
+        13. Mostrar todos los trabajos
         0. Salir
         """)
     
@@ -55,13 +63,21 @@ class Menu:
                 print("{0} no es una opcion valida".format(opcion))
 
     #READ - Metodo para mostrar todos los clientes cargados en la base de datos
-    '''ESTE METODO PODRIA MEJORARSE PARA BUSCAR LOS DATOS DE UN SOLO CLIENTE POR ID'''
     def mostrar_clientes(self, lista = None):
         if lista == None:
             lista = self.lista_clientes.lista
         for cliente in lista:
             print(cliente)
             print("***********************************")
+    
+    #READ - Metodo para mostrar un solo cliente de la base de datos, buscando por ID
+    def mostrar_un_cliente(self, lista = None):
+        id_cliente = int(input("Ingrese el id del cliente: "))
+        cliente = self.repostrabajos.get_one(id_cliente)
+        if cliente == None:
+            print("Error, no existe un cliente con el ID ingresado")
+        else:
+            return cliente  
 
     #CREATE - Metodo para crear un nuevo objeto cliente en la base de datos, dentro de la clase hija que corresponde (C o P)
     def nuevo_cliente(self):
@@ -180,7 +196,16 @@ class Menu:
         if nt == 0:
             print("Error al intentar cargar el trabajo nuevo")
         else:
-            print("Trabajo cargado exitosamente")  
+            print("Trabajo cargado exitosamente")
+
+    #Mostrar un trabajo en particular
+    def mostrar_trabajo(self):
+        id_trabajo = int(input("Ingrese el id del trabajo: "))
+        trabajo = self.repostrabajos.get_one(id_trabajo)
+        if trabajo == None:
+            print("Error, no existe un trabajo con el ID ingresado")
+        else:
+            return trabajo  
             
     #TRABAJO FINALIZADO: Para marcar un trabajo como finalizado con la fecha actual (hoy)
     def trabajo_finalizado(self):
@@ -259,8 +284,29 @@ class Menu:
             print("Error, no existe un trabajo con el ID ingresado")
         else:
             return self.repostrabajos.delete(trabajo)
-            print("Trabajo eliminado con exito !!!") 
+            print("Trabajo eliminado con exito !!!")
 
+    #INFORME: Historial de trabajos que encargo cada cliente
+    '''TERMINAR ESTE METODO Y LUEGO VER TKINTER'''
+    def informe_historial_trabajos(self):
+        id_cliente = int(input("Ingrese el id del cliente, para ver su historial de trabajos: "))
+        lista = self.listatrabajos.lista
+        if id_cliente in lista:
+            trabajo = self.repostrabajos.get_one(id_cliente)
+        if trabajo == None:
+            print("Error, no existe un cliente con el ID ingresado")
+        else:
+            print("Lista de trabajos del cliente: ", trabajo.cliente)
+            return trabajo
+            print("***********************************")
+    
+    #Mostrar todos los trabajos de la base de datos
+    def mostrar_trabajos(self, lista = None):
+        if lista == None:
+            lista = self.listatrabajos.lista
+        for cliente in lista:
+            print(cliente)
+            print("***********************************")
 
     def salir(self):
         print("Gracias por utilizar el sistema.")
