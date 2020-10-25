@@ -22,6 +22,9 @@ class Menu:
             "4": self.eliminar_clientes,
             "5": self.nuevo_trabajo,
             "6": self.trabajo_finalizado,
+            "7": self.trabajo_entregado,
+            "8": self.actualizar_datos_trabajo,
+            "9": self.eliminar_trabajo,
             "0": self.salir
         }
     
@@ -30,10 +33,13 @@ class Menu:
         Menu del sistema:
         1. Mostrar todos los clientes
         2. Ingresar los datos de un nuevo cliente
-        3. Actualizar datos de cliente
+        3. Actualizar datos de un cliente
         4. Eliminar cliente
-        5. Nuevo Trabajo
-        6. Marcar como finalizado un trabajo
+        5. Ingresar los datos de un nuevo trabajo
+        6. Marcar un trabajo como finalizado
+        7. Marcar un trabajo como entregado
+        8. Actualizar datos de un trabajo
+        9. Eliminar trabajo
         0. Salir
         """)
     
@@ -176,17 +182,84 @@ class Menu:
         else:
             print("Trabajo cargado exitosamente")  
             
-    '''SUBIR COMMIT DE TRABAJO FINALIZADO'''
     #TRABAJO FINALIZADO: Para marcar un trabajo como finalizado con la fecha actual (hoy)
     def trabajo_finalizado(self):
-        id_trabajo = input("Ingrese el id del trabajo: ") 
+        id_trabajo = int(input("Ingrese el id del trabajo que desea marcar como concluido: "))
         trabajo = self.repostrabajos.get_one(id_trabajo)
         if trabajo == None:
             print("Error, no existe un trabajo con el ID ingresado")
         else:
             trabajo.fecha_entrega_real = datetime.date.today()
             return self.repostrabajos.update(trabajo)
-            print("El trabajo fue marcado como finalizado exitosamente")
+            print("El trabajo fue marcado como finalizado, de manera exitosa")
+
+    #TRABAJO ENTREGADO: Para marcar un trabajo como entregado
+    def trabajo_entregado(self):
+        id_trabajo = int(input("Ingrese el id del trabajo que desea marcar como entregado: ")) 
+        trabajo = self.repostrabajos.get_one(id_trabajo)
+        if trabajo == None:
+            print("Error, no existe un trabajo con el ID ingresado")
+        else:
+            trabajo.retirado = True
+            return self.repostrabajos.update(trabajo)
+            print("El trabajo fue marcado como entregado, de manera exitosa")
+
+    #ACTUALIZAR TRABAJO: Para actualizar cualquiera de los datos del trabajo
+    #(excepto id, y cliente asociado al mismo), buscando por ID
+    def actualizar_datos_trabajo(self):
+        id_trabajo = int(input("Ingrese el id del trabajo que desea actualizar: "))
+        trabajo = self.repostrabajos.get_one(id_trabajo)
+        if trabajo == None:
+            print("Error, no existe un trabajo con el ID ingresado")
+        else:
+            preg_uno = int(input("Si desea actualizar la fecha de ingreso marque 1, de lo contrario otro numero: "))
+            if preg_uno == 1:
+                print("Actualizar la fecha de ingreso: ")
+                dia = (int(input("Ingrese el dia de ingreso: ")))
+                mes = (int(input("Ingrese el mes de ingreso: ")))
+                anio = (int(input("Ingrese el año de ingreso: ")))
+                fecha_ingreso = datetime.date(anio, mes, dia)
+                trabajo.fecha_ingreso = fecha_ingreso
+            preg_dos = int(input("Si desea actualizar la fecha de entrega propuesta marque 1, \n de lo contrario otro numero: "))
+            if preg_dos == 1:
+                print("Actualizar la fecha de entrega propuesta: ")
+                dia = (int(input("Ingrese el dia de entrega propuesta: ")))
+                mes = (int(input("Ingrese el mes de entrega propuesta: ")))
+                anio = (int(input("Ingrese el año de entrega propuesta: ")))
+                fecha_entrega_propuesta = datetime.date(anio, mes, dia)
+                trabajo.fecha_entrega_propuesta = fecha_entrega_propuesta
+            preg_tres = int(input("Si el trabajo ya fue entregado, y desea modificar esa fecha, marque 1,\n de lo contrario marque otro numero: "))
+            if preg_tres == 1:
+                print("Actualizar la fecha de entrega real: ")
+                dia = (int(input("Ingrese el dia de entrega real: ")))
+                mes = (int(input("Ingrese el mes de entrega real: ")))
+                anio = (int(input("Ingrese el año de entrega real: ")))
+                fecha_entrega_real = datetime.date(anio, mes, dia)
+                trabajo.fecha_entrega_real = fecha_entrega_real
+            preg_cuatro = int(input("Si desea modificar la descripcion del trabajo, marque 1,\n de lo contrario otro numero: "))
+            if preg_cuatro == 1:
+                print("Actualizar descripcion del trabajo: ")
+                descripcion = input("Ingrese una breve descripcion del trabajo a realizar: ")
+                trabajo.descripcion = descripcion
+            preg_cinco = int(input("Si desea modificar el estado a retirado/no retirado,\n marque 1, de lo contrario otro numero: "))
+            if preg_cinco == 1:
+                preg_retirado = int(input("Ingrese 1 para indicar que el trabajo esta retirado,\n otro numero para marcar como no retirado: "))
+                if preg_retirado == 1:
+                    retirado = True
+                else:
+                    retirado = False
+            return self.repostrabajos.update(trabajo)
+            print("Datos del trabajo actualizados con exito !!!")
+
+    #ELIMINAR TRABAJO: busca por ID, en repositorio trabajos y si lo encuentra lo elimina de la base de datos
+    def eliminar_trabajo(self):
+        id_trabajo = int(input("Ingrese el id del trabajo que desea eliminar: "))
+        trabajo = self.repostrabajos.get_one(id_trabajo)
+        if trabajo == None:
+            print("Error, no existe un trabajo con el ID ingresado")
+        else:
+            return self.repostrabajos.delete(trabajo)
+            print("Trabajo eliminado con exito !!!") 
 
 
     def salir(self):
