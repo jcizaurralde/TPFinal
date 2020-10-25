@@ -14,6 +14,7 @@ class Menu:
         self.lista_clientes = ListaClientes()
         self.reposclientes = RepositorioClientes()
         self.listatrabajos = ListaTrabajos()
+        self.repostrabajos = RepositorioTrabajos()
         self.opciones = {
             "1": self.mostrar_clientes,
             "2": self.nuevo_cliente,
@@ -174,6 +175,18 @@ class Menu:
             print("Error al intentar cargar el trabajo nuevo")
         else:
             print("Trabajo cargado exitosamente")  
+            
+    '''SUBIR COMMIT DE TRABAJO FINALIZADO'''
+    #TRABAJO FINALIZADO: Para marcar un trabajo como finalizado con la fecha actual (hoy)
+    def trabajo_finalizado(self):
+        id_trabajo = input("Ingrese el id del trabajo: ") 
+        trabajo = self.repostrabajos.get_one(id_trabajo)
+        if trabajo == None:
+            print("Error, no existe un trabajo con el ID ingresado")
+        else:
+            trabajo.fecha_entrega_real = datetime.date.today()
+            return self.repostrabajos.update(trabajo)
+            print("El trabajo fue marcado como finalizado exitosamente")
 
 
     def salir(self):
