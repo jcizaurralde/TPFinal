@@ -27,11 +27,11 @@ class Menu:
             "9": self.trabajo_entregado,
             "10": self.actualizar_datos_trabajo,
             "11": self.eliminar_trabajo,
-            "12": self.informe_historial_trabajos,
+            "12": self.historial_trabajos,
             "13": self. mostrar_trabajos,
             "0": self.salir
         }
-    
+
     def mostrar_menu(self):
         print ("""
         Menu del sistema:
@@ -46,7 +46,7 @@ class Menu:
         9. Marcar un trabajo como entregado
         10. Actualizar datos de un trabajo
         11. Eliminar trabajo
-        12. Ver historial de trabajos de un cliente
+        12. Historial de trabajos de un cliente
         13. Mostrar todos los trabajos
         0. Salir
         """)
@@ -73,11 +73,11 @@ class Menu:
     #READ - Metodo para mostrar un solo cliente de la base de datos, buscando por ID
     def mostrar_un_cliente(self, lista = None):
         id_cliente = int(input("Ingrese el id del cliente: "))
-        cliente = self.repostrabajos.get_one(id_cliente)
+        cliente = self.reposclientes.get_one(id_cliente)
         if cliente == None:
             print("Error, no existe un cliente con el ID ingresado")
         else:
-            return cliente  
+            print(cliente)  
 
     #CREATE - Metodo para crear un nuevo objeto cliente en la base de datos, dentro de la clase hija que corresponde (C o P)
     def nuevo_cliente(self):
@@ -205,7 +205,7 @@ class Menu:
         if trabajo == None:
             print("Error, no existe un trabajo con el ID ingresado")
         else:
-            return trabajo  
+            print(trabajo)  
             
     #TRABAJO FINALIZADO: Para marcar un trabajo como finalizado con la fecha actual (hoy)
     def trabajo_finalizado(self):
@@ -274,7 +274,7 @@ class Menu:
                 else:
                     retirado = False
             return self.repostrabajos.update(trabajo)
-            print("Datos del trabajo actualizados con exito !!!")
+        print("Datos del trabajo actualizados con exito !!!")
 
     #ELIMINAR TRABAJO: busca por ID, en repositorio trabajos y si lo encuentra lo elimina de la base de datos
     def eliminar_trabajo(self):
@@ -286,20 +286,16 @@ class Menu:
             return self.repostrabajos.delete(trabajo)
             print("Trabajo eliminado con exito !!!")
 
-    #INFORME: Historial de trabajos que encargo cada cliente
-    '''TERMINAR ESTE METODO Y LUEGO VER TKINTER'''
-    def informe_historial_trabajos(self):
-        id_cliente = int(input("Ingrese el id del cliente, para ver su historial de trabajos: "))
+    #INFORME: Historial de trabajos de un cliente, buscado por su id
+    def historial_trabajos(self):
+        id_cliente = int(input("Ingrese el ID del cliente: "))
+        cliente = self.reposclientes.get_one(id_cliente)
         lista = self.listatrabajos.lista
-        if id_cliente in lista:
-            trabajo = self.repostrabajos.get_one(id_cliente)
-        if trabajo == None:
-            print("Error, no existe un cliente con el ID ingresado")
-        else:
-            print("Lista de trabajos del cliente: ", trabajo.cliente)
-            return trabajo
-            print("***********************************")
-    
+        for consulta in lista:
+            if consulta.cliente.id_cliente == id_cliente:
+                print("Trabajo del cliente: ")
+                print(consulta)
+
     #Mostrar todos los trabajos de la base de datos
     def mostrar_trabajos(self, lista = None):
         if lista == None:
